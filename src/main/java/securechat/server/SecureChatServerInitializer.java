@@ -12,28 +12,25 @@ import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.ssl.SslHandler;
 
-public class SecureChatServerInitializer extends ChannelInitializer<SocketChannel>
-{
-	private final SSLContext sslContext;
+public class SecureChatServerInitializer extends ChannelInitializer<SocketChannel> {
+    private final SSLContext sslContext;
 
-	public SecureChatServerInitializer(final SSLContext sslContext)
-	{
-		this.sslContext = sslContext;
-	}
+    public SecureChatServerInitializer(final SSLContext sslContext) {
+        this.sslContext = sslContext;
+    }
 
-	@Override
-	protected void initChannel(final SocketChannel ch) throws Exception
-	{
-		final SSLEngine sslEngine = sslContext.createSSLEngine();
-		sslEngine.setUseClientMode(false);
+    @Override
+    protected void initChannel(final SocketChannel ch) throws Exception {
+        final SSLEngine sslEngine = sslContext.createSSLEngine();
+        sslEngine.setUseClientMode(false);
 
-		final ChannelPipeline pipeline = ch.pipeline();
-		pipeline.addLast("sslHandler", new SslHandler(sslEngine));
+        final ChannelPipeline pipeline = ch.pipeline();
+        pipeline.addLast("sslHandler", new SslHandler(sslEngine));
 
-		pipeline.addLast(new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
-		pipeline.addLast(new StringDecoder());
-		pipeline.addLast(new StringEncoder());
+        pipeline.addLast(new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
+        pipeline.addLast(new StringDecoder());
+        pipeline.addLast(new StringEncoder());
 
-		pipeline.addLast(new SecureChatServerHandler());
-	}
+        pipeline.addLast(new SecureChatServerHandler());
+    }
 }
